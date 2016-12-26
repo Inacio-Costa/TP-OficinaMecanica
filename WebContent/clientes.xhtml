@@ -109,12 +109,12 @@
 						#{cliente.email}
 					</p:column>
 	
-					<p:column width="170"> 
+					<p:column width="170" rendered="#{loginBean.usuario.papel != perfilBean.mecanico}"> 
 						<f:facet name="header">Ações</f:facet>
 						
 						<!-- Altera -->						
 						<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm" 
-							rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">>
+							rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBean.cliente}"></f:setPropertyActionListener>
 							<f:ajax render=":cadastro"></f:ajax>
 						</h:commandLink>
