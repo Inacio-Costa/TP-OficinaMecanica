@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+
+<ui:composition template="/template.xhtml">
+
+	<ui:define name="corpo">
+
+		<!-- Formulário -->
+		<h:form id="cadastro">
+			<p:messages styleClass="erros" />
+			<h2>
+				<h:outputText
+					value="#{empty pecaBean.peca.id ? 'Nova Peça' : 'Editar Peça'}" />
+			</h2>
+
+			<p:fieldset legend="Dados da peça">
+
+				<h:outputLabel value="Nome" for="nome" />
+				<p:inputText value="#{pecaBean.peca.nome}" id="nome" />
+
+				<h:outputLabel value="Fornecedor" for="fornecedor" />
+				<p:inputText value="#{pecaBean.peca.fornecedor}" id="fornecedor" />
+
+				<h:outputLabel value="Tipo" for="tipo" />
+				<p:inputText value="#{pecaBean.peca.tipo}" id="tipo" />
+
+				<h:outputLabel value="Marca" for="marca" />
+				<p:inputText value="#{pecaBean.peca.marca}" id="marca" />
+
+				<h:outputLabel value="Quantidade" for="quantidade" />
+				<p:inputText value="#{pecaBean.peca.quantidade}" id="quantidade"
+					converter="javax.faces.Integer" size="3" />
+
+				<br></br>
+				<div class="row">
+
+					<div class="col-md-offset-1 col-md-5">
+						<h:commandButton
+							value="#{empty pecaBean.peca.id ? 'Gravar' : 'Atualizar'}"
+							action="#{pecaBean.grava}" styleClass="btn btn-primary btn-sm">
+							<f:ajax execute="@form" render=":cadastro :lista"></f:ajax>
+						</h:commandButton>
+
+
+						<h:commandButton action="#{pecaBean.cancela}" value="Cancelar"
+							styleClass="btn btn-primary btn-sm">
+							<f:ajax execute="@form" render=":cadastro"></f:ajax>
+						</h:commandButton>
+					</div>
+				</div>
+			</p:fieldset>
+		</h:form>
+
+		<h2>
+			<h:outputText value="Lista de Peças" />
+		</h2>
+		<!-- Lista de peças -->
+		<h:form id="lista" update="message">
+
+			<p:dataTable value="#{pecaBean.pecas}" var="peca" paginator="true"
+				rows="4" widgetVar="pecaTable"
+				emptyMessage="Nenhum resultado encontrado..."
+				filteredValue="#{pecaBean.pecaFilter}" rowClasses="impar, par"
+				scrollHeight="150">
+
+				<!-- Filtro -->
+				<f:facet name="header">
+					<div class="row">
+
+						<div class="col-md-offset-8 col-md-1">
+							<h:outputText value="Pesquisa:" />
+						</div>
+
+						<div class="col-md-2">
+							<p:inputText id="globalFilter" onkeyup="PF('pecaTable').filter()"
+								style="width:150px" placeholder="Pesquisa" />
+						</div>
+					</div>
+				</f:facet>
+
+
+				<p:column filterBy="#{peca.nome}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Nome</f:facet>
+						#{peca.nome}
+					</p:column>
+
+				<p:column filterBy="#{peca.fornecedor}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Fornecedor</f:facet>
+						#{peca.fornecedor}
+					</p:column>
+
+				<p:column filterBy="#{peca.tipo}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Tipo</f:facet>
+						#{peca.tipo}
+					</p:column>
+
+				<p:column filterBy="#{peca.marca}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Marca</f:facet>
+						#{peca.marca}
+					</p:column>
+
+				<p:column>
+					<f:facet name="header">Quantidade</f:facet>
+						#{peca.quantidade}
+					</p:column>
+
+				<p:column width="170">
+					<f:facet name="header">Ações</f:facet>
+					<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm">
+						<f:setPropertyActionListener value="#{peca}"
+							target="#{pecaBean.peca}"></f:setPropertyActionListener>
+						<f:ajax render=":cadastro"></f:ajax>
+					</h:commandLink>
+
+					<!-- Remoção -->
+					<h:commandLink styleClass="btn btn-sm btn-danger" value="remover"
+						action="#{pecaBean.remove(peca)}" update="message"
+						onclick="return confirm('Deseja fazer a Exclusão ?');">
+						<f:ajax render=":lista"></f:ajax>
+					</h:commandLink>
+				</p:column>
+
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</html>

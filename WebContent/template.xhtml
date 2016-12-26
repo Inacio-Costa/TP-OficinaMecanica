@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Oficina Mecânica</title>
+	<h:outputScript name="jsf.js" library="javax.faces" target="head" />
+	<h:outputStylesheet name="bootstrap.css" library="css" />
+	<h:outputStylesheet name="style.css" library="css" />
+</h:head>
+
+<h:body>
+	<div id="cabecalho">
+		<h:graphicImage library="imagens" name="ico.png" id="logoCompany" />
+		
+		<div id="usuarioLogado">
+			<h:form rendered="#{not empty loginBean.usuario.login}">
+						Logado como: #{loginBean.usuario.login}
+						<h:commandButton action="#{loginBean.logout()}" value="Sair"
+					styleClass="btn btn-danger btn-xs" />
+			</h:form>
+		</div>
+
+		<h:form style="float: right; right: 50%; margin-right: -450px;">
+			<p:themeSwitcher>
+				<f:selectItem itemLabel="Choose your theme" itemValue="" />
+				<f:selectItem itemLabel="Afternoon" itemValue="afternoon" />
+				<f:selectItem itemLabel="Aristo" itemValue="aristo" />
+				<f:selectItem itemLabel="Bluesky" itemValue="bluesky" />
+				<f:selectItem itemLabel="Boostrap" itemValue="bootstrap" />
+				<f:selectItem itemLabel="Dot-Luv" itemValue="dot-luv" />
+				<f:selectItem itemLabel="Midnight" itemValue="midnight" />
+				<f:selectItem itemLabel="Rocket" itemValue="rocket" />
+			</p:themeSwitcher>
+		</h:form>
+		
+		
+	</div>
+
+	<div class="col-md-offset-1 col-md-10">
+		<h:form rendered="#{not empty loginBean.usuario.login}">
+			<p:menubar>
+				<p:menuitem value="Início" url="index.xhtml" />
+
+				<p:menuitem value="Cliente" url="clientes.xhtml" />
+
+				<p:menuitem value="Veiculos" url="veiculos.xhtml" />
+
+				<p:menuitem value="Peças" url="pecas.xhtml" />
+
+				<p:menuitem value="Serviço" url="ordem-servico.xhtml" />
+
+			</p:menubar>
+		</h:form>
+		<ui:insert name="corpo" />
+	</div>
+
+	<!-- <div id="rodape">Copyright 2016</div> -->
+</h:body>
+</html>

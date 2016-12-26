@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<h:body>
+		<ui:composition template="/template.xhtml">
+			<ui:define name="corpo">
+				<h:form id="formlogin">
+					<p:messages styleClass="erros" />
+					<p:fieldset legend="Dados do Login">
+						<h:outputLabel value="Login:" />
+						<p:inputText value="#{loginBean.usuario.login}" required="true" requiredMessage="O usuário é necessário"/>
+						
+						<h:outputLabel value="Senha:" />
+						<p:keyboard password="true" value="#{loginBean.usuario.senha}" required="true" 
+							requiredMessage="A senha e necessária"/>				
+						
+						<br></br>
+						<h:commandButton value="Efetuar Login"
+								action="#{loginBean.efetuaLogin}" styleClass="btn"/>
+						
+					</p:fieldset>
+				</h:form>
+			</ui:define>
+		</ui:composition>
+	</h:body>
+</html>

@@ -11,7 +11,7 @@ public class Teste {
 		usuario.setLogin("admin");
 		usuario.setSenha("admin");
 		
-		if (new UsuarioDAO().existe(usuario)){
+		if (new UsuarioDAO().existe(usuario) != null){
 			System.out.println("Existe");
 		}
 			

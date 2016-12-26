@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<ui:composition template="/template.xhtml">
+
+	<ui:define name="corpo">
+
+		<h:form id="cadastro">
+
+			<!-- Formulário -->
+			<p:messages styleClass="erros" />
+			<h2>
+				<h:outputText
+					value="#{empty pecaBean.peca.id ? 'Nova Veículo' : 'Editar Veículo'}" />
+			</h2>
+
+			<p:fieldset legend="Dados do veículo">
+
+				<h:outputLabel value="Placa" for="placa" />
+				<p:inputMask value="#{veiculoBean.veiculo.placa}" id="placa"
+					mask="aaa-9999" size="10" />
+
+				<h:outputLabel value="Marca" for="marca" />
+				<p:inputText value="#{veiculoBean.veiculo.marca}" id="marca" />
+
+				<h:outputLabel value="modelo" for="modelo" />
+				<p:inputText value="#{veiculoBean.veiculo.modelo}" id="modelo" />
+
+				<h:outputLabel value="anofabricacao" for="anofabricacao" />
+				<p:inputMask value="#{veiculoBean.veiculo.anoFabricacao}"
+					id="anofabricacao" mask="9999" converter="javax.faces.Integer"
+					size="5" />
+
+				<h:outputLabel value="anomodelo" for="anomodelo" />
+				<p:inputMask value="#{veiculoBean.veiculo.anoModelo}" id="anomodelo"
+					mask="9999" converter="javax.faces.Integer" size="5" />
+
+				<h:outputLabel value="Cliente" for="cliente" />
+				<p:selectOneMenu value="#{veiculoBean.idCliente}" id="cliente"
+					required="true" requiredMessage="Selecione um cliente">
+					<f:selectItem itemLabel="Selecione o Cliente" />
+					<f:selectItems value="#{clienteBean.clientes}" var="cliente"
+						itemValue="#{cliente.id}" itemLabel="#{cliente.nome}" />
+				</p:selectOneMenu>
+
+				<br></br>
+				<br></br>
+				<div class="row">
+					<div class="col-md-offset-1 col-md-5">
+						<h:commandButton value="Gravar" action="#{veiculoBean.grava}"
+							styleClass="btn btn-primary btn-sm">
+							<f:ajax execute="@form" render=":cadastro :lista"></f:ajax>
+						</h:commandButton>
+
+						<h:commandButton value="Cancelar" action="#{veiculoBean.cancela}"
+							styleClass="btn btn-primary btn-sm">
+							<f:ajax render=":cadastro"></f:ajax>
+						</h:commandButton>
+					</div>
+				</div>
+			</p:fieldset>
+		</h:form>
+
+
+		<h2>
+			<h:outputText value="Lista de Veículos" />
+		</h2>
+		<!-- Tabela de veículos -->
+		<h:form id="lista">
+			<p:dataTable value="#{veiculoBean.veiculos}" var="veiculo"
+				paginator="true" rows="5" widgetVar="veiculoTable"
+				emptyMessage="Nenhum resultado encontrado..."
+				filteredValue="#{veiculoBean.veiculoFilter}">
+
+				<!-- Filtro -->
+				<f:facet name="header">
+					<div class="row">
+
+						<div class="col-md-offset-8 col-md-1">
+							<h:outputText value="Pesquisa:" />
+						</div>
+
+						<div class="col-md-2">
+							<p:inputText id="globalFilter"
+								onkeyup="PF('veiculoTable').filter()" style="width:150px"
+								placeholder="Pesquisa" />
+						</div>
+					</div>
+				</f:facet>
+
+				<p:column filterBy="#{veiculo.placa}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Placa</f:facet>
+					#{veiculo.placa}
+				</p:column>
+
+				<p:column filterBy="#{veiculo.marca}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Marca</f:facet>
+					#{veiculo.marca}
+				</p:column>
+
+				<p:column filterBy="#{veiculo.modelo}" filterMatchMode="contains"
+					filterStyle="display:none">
+					<f:facet name="header">Modelo</f:facet>
+					#{veiculo.modelo}
+				</p:column>
+
+				<p:column headerText="Ano Fabricação">
+						#{veiculo.anoFabricacao}
+				</p:column>
+
+				<p:column headerText="Ano Modelo">
+						#{veiculo.anoModelo}
+				</p:column>
+
+				<p:column headerText="Nome Cliente">
+						#{veiculo.cliente.nome}
+				</p:column>
+
+				<p:column headerText="CPF Cliente">
+						#{veiculo.cliente.cpf}
+				</p:column>
+
+				<p:column width="170">
+					<f:facet name="header">Ações</f:facet>
+
+					<h:commandLink value="alterar"
+						action="#{veiculoBean.carregaCliente(veiculo.cliente.id)}"
+						styleClass="btn btn-primary btn-sm">
+						<f:setPropertyActionListener value="#{veiculo}"
+							target="#{veiculoBean.veiculo}"></f:setPropertyActionListener>
+						<f:ajax render=":cadastro"></f:ajax>
+					</h:commandLink>
+
+					<h:commandLink value="remover"
+						action="#{veiculoBean.remove(veiculo)}"
+						onclick="return confirm('Deseja fazer a Exclusão ?');"
+						styleClass="btn btn-danger btn-sm">
+						<f:ajax render="@form"></f:ajax>
+					</h:commandLink>
+
+				</p:column>
+			</p:dataTable>
+		</h:form>
+	</ui:define>
+
+
+</ui:composition>
+</html>

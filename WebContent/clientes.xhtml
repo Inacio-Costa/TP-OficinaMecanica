@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+
+	<ui:composition template="/template.xhtml">
+		<ui:define name="corpo">
+			
+			<h:form id="cadastro" >
+				<p:messages styleClass="erros"/>
+				
+				<h2> 
+					<h:outputText value="#{empty pecaBean.peca.id ? 'Novo Cliente' : 'Editar Cliente'}"/>
+				</h2>
+				
+				<p:fieldset legend="Dados do cliente">
+					<h:outputLabel value="CPF" for="cpf" />
+					<p:inputMask value="#{clienteBean.cliente.cpf}"
+						mask="999.999.999-99" id="cpf" size="15">
+					</p:inputMask>
+	
+					<h:outputLabel value="Nome" for="nome" />
+					<p:inputText value="#{clienteBean.cliente.nome}" id="nome" />
+	
+					<h:outputLabel value="Telefone" for="telefone" />
+					<p:inputMask value="#{clienteBean.cliente.telefone}"
+						mask="(99) 9 9999-9999" id="telefone" size="15"/>
+	
+					<h:outputLabel value="Endereço" for="endereco" />
+					<p:inputTextarea value="#{clienteBean.cliente.endereco}"
+						id="endereco" />
+	
+	
+					<h:outputLabel value="E-mail" for="email" />
+					<p:inputText value="#{clienteBean.cliente.email}" id="email" />
+					
+					<br></br>
+					<div class="row">
+					  
+					  <div class="col-md-offset-1 col-md-5">
+					  	<h:commandButton action="#{clienteBean.grava()}" value="#{empty clienteBean.cliente.id ? 'Gravar' : 'Atualizar'}"  style="margin-left: 30px;" styleClass="btn btn-primary btn-sm" >
+							<f:ajax execute="@form" render=":cadastro :lista"></f:ajax>
+						</h:commandButton>
+						
+						<h:commandButton action="#{clienteBean.cancela()}" value="Cancelar" styleClass="btn btn-primary btn-sm">
+							<f:ajax execute="@form" render=":cadastro"></f:ajax>
+						</h:commandButton>
+					  </div>
+					</div>
+				</p:fieldset>
+			</h:form>
+			
+			<!-- Lista de clientes -->
+			<h2> 
+				<h:outputText value="Lista de Clientes"/>
+			</h2>
+			<h:form id="lista">
+				<p:dataTable value="#{clienteBean.clientes}" var="cliente"   paginator="true" rows="4" widgetVar="clienteTable"
+					emptyMessage="Nenhum resultado encontrado..." filteredValue="#{clienteBean.clientesFilter}">
+					
+					<!-- Filtro -->
+					 <f:facet name="header">
+			           <div class="row">
+			           		
+			                <div class="col-md-offset-8 col-md-1">
+			                	<h:outputText value="Pesquisa:" />
+			                </div>
+			                
+			                <div class="col-md-2">
+			                	<p:inputText id="globalFilter" onkeyup="PF('clienteTable').filter()" style="width:150px" placeholder="Pesquisa"/>
+			               	</div>
+			           </div>
+			        </f:facet>
+					
+					<p:column filterBy="#{cliente.cpf}"  filterMatchMode="contains" filterStyle="display:none">
+						<f:facet name="header">Cpf</f:facet>
+						#{cliente.cpf}
+					</p:column>
+	
+					<p:column filterBy="#{cliente.nome}"  filterMatchMode="contains" filterStyle="display:none">
+						<f:facet name="header">Nome</f:facet>
+						#{cliente.nome}
+					</p:column>
+	
+					<p:column >
+						<f:facet name="header">Telefone</f:facet>
+						#{cliente.telefone}
+					</p:column>
+					
+					<p:column >
+						<f:facet name="header">Endereço</f:facet>
+						#{cliente.endereco}
+					</p:column>
+					
+					<p:column filterBy="#{cliente.email}"  filterMatchMode="contains" filterStyle="display:none">
+						<f:facet name="header">E-mail</f:facet>	
+						#{cliente.email}
+					</p:column>
+	
+					<p:column width="170"> 
+						<f:facet name="header">Ações</f:facet>
+						
+						<!-- Altera -->						
+						<h:commandLink value="alterar" styleClass="btn btn-primary btn-sm" >
+							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBean.cliente}"></f:setPropertyActionListener>
+							<f:ajax render=":cadastro"></f:ajax>
+						</h:commandLink>
+					
+						<!-- Remoção -->
+					    <h:commandLink  value="Remover" action="#{clienteBean.remove(cliente)}" styleClass="btn btn-danger btn-sm" onclick="return confirm('Deseja fazer a Exclusão ?');">
+					    	<f:ajax render="@form"></f:ajax>    
+					    </h:commandLink>
+					    
+				    </p:column>
+				</p:dataTable>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</html>

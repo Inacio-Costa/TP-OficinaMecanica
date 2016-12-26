@@ -5,13 +5,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
 public class Veiculo {
+	
 	@Id
 	@SequenceGenerator(name="IdVeiculo", sequenceName="seq_veiculo")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="IdVeiculo")
@@ -28,12 +29,13 @@ public class Veiculo {
 	private String placa;
 	
 	/*@NotEmpty(message="O campo Ano de Fabricação não deve ser vazio!")*/
+	/*@Past(message="A data de fabricação não pode ser maior que hoje!")*/
 	private Integer anoFabricacao;
 	
 	/*@NotEmpty(message="O campo Ano de Modelo não deve ser vazio!")*/
 	private Integer anoModelo;
 	
-	@ManyToOne
+	@OneToOne
 	private Cliente cliente;
 	
 	public Long getId() {

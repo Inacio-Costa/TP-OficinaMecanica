@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<title>Sistemas de Notas Fiscais</title>
+	<h:outputScript name="jsf.js" library="javax.faces" target="head"></h:outputScript>
+</h:head>
+
+<h:body>
+	<ui:composition template="/template.xhtml">
+		<p:growl id="message" />
+		<ui:define name="corpo">
+			<div class="row">
+
+				<!-- Cadastra Ordem de serviço -->
+				<div class="col-md-5">
+					<h:form id="cadastro">
+						<fieldset>
+						
+						<legend>#{empty ordemServicoBean.ordemServico.id ? 'Novo serviço' : 'Editar Serviço'}</legend>
+						
+							<!-- <p:messages styleClass="erros" /> -->
+
+							<p:outputLabel value="Veiculo" for="veiculo" />
+							<p:selectOneMenu value="#{ordemServicoBean.idVeiculo}" id="veiculo">
+								<f:selectItem itemLabel="Selecione o veiculo" />
+								<f:selectItems value="#{veiculoBean.veiculos}" var="veiculo" itemValue="#{veiculo.id}" itemLabel="#{veiculo.placa}" />
+							</p:selectOneMenu>
+							
+							<br></br>
+							
+							<p:outputLabel value="Dataorçamento" for="dataOrcamento" />
+							<p:calendar size="8"
+								value="#{ordemServicoBean.ordemServico.dataOrcamento.time}"
+								readonly="true" showOn="false" pattern="dd/MM/yyyy" mask="99/99/9999"
+								id="dataOrcamento" />
+
+							<p:outputLabel value="Servico" for="servico" />
+							<p:inputTextarea id="servico" cols="50"
+								value="#{ordemServicoBean.ordemServico.servico}"></p:inputTextarea>
+
+							<p:outputLabel value="Valor: R$" for="valor" />
+							<p:inputText id="valor" size="10"
+								value="#{ordemServicoBean.ordemServico.valor}" />
+							
+							
+							<p:outputLabel value="Status" for="status" />
+							<p:inputText value="#{ordemServicoBean.ordemServico.status}" id="status" readonly="true"/>
+
+
+							<br></br> <br></br>
+							<div class="row">
+								<div class="col-md-offset-1 col-md-6">
+									<h:commandButton value="#{empty ordemServicoBean.ordemServico.id ? 'Gravar' : 'Atualizar'}" action="#{ordemServicoBean.grava}" styleClass="btn btn-primary btn-sm">
+										<f:ajax execute="@form" render=":cadastro :lista :cadastroPeca"></f:ajax>
+									</h:commandButton>
+
+									<h:commandButton value="Cancelar"
+										action="#{ordemServicoBean.cancela}"
+										styleClass="btn btn-primary btn-sm">
+										<f:ajax render=":cadastro :cadastroPeca"></f:ajax>
+									</h:commandButton>
+								</div>
+
+							</div>
+
+
+						</fieldset>
+					</h:form>
+					
+				</div>
+				
+
+				<!-- Cadastra peças usadas no serviço  -->
+				<div class="col-md-offset-1 col-md-6">
+
+					<h:form id="cadastroPeca">
+						<legend>Peças</legend>
+						
+						<div class="row">
+							<div class="col-md-4">
+								<p:outputLabel value="Peças" for="peca" />
+								<p:selectOneMenu value="#{ordemServicoBean.idPeca}" id="peca">
+									<f:selectItem itemLabel="Selecione uma peça"></f:selectItem>
+									<f:selectItems value="#{pecaBean.pecas}" var="peca"
+										itemValue="#{peca.id}" itemLabel="#{peca.nome}" />
+								</p:selectOneMenu>
+							</div>
+							
+							<div class="col-md-4">
+								<p:outputLabel value="Qtde: " for="quantidade" />
+								<p:inputText id="quantidade"
+									value="#{ordemServicoBean.item.quantidade}" size="3"/>
+							</div>
+							
+							<div class="col-md-4">
+								<h:commandButton value="Add" action="#{ordemServicoBean.adicionaItem}" update="pecaList">
+								</h:commandButton>
+							</div>
+
+						</div>
+
+						<p:dataTable value="#{ordemServicoBean.ordemServico.itens}"
+							var="item" id="pecaList" scrollRows="3" scrollHeight="true">
+							
+							<p:column>
+								<f:facet name="header">Nome</f:facet>
+								#{item.peca.nome}
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">Quantidade</f:facet>
+								#{item.quantidade}
+							</p:column>
+							
+							<p:column>
+								<f:facet name="header">Ações</f:facet>
+								<h:commandButton action="#{ordemServicoBean.removeItem(item)}" value="remove"  styleClass="btn btn-danger btn-sm">
+									
+								</h:commandButton>
+								
+								
+							</p:column>
+							
+						</p:dataTable>
+
+					</h:form>
+
+
+				</div>
+
+			</div>
+			<!-- Lista de peças -->
+			<h:form id="lista" update="message">
+				<p:dataTable value="#{ordemServicoBean.ordemServicos}" var="os" widgetVar="osTable"
+					paginator="true" rows="4" emptyMessage="Nenhum resultado a ser encontrado..." filteredValue="#{ordemServicoBean.ordemServicoFilter}">
+					
+					
+					<!-- Filtro -->
+					 <f:facet name="header">
+			           <div class="row">
+			                <div class="col-md-2">	
+			                	<h:outputText value="Lista de Peças" />
+			                </div>
+			                
+			                <div class="col-md-offset-7 col-md-1">
+			                	<h:outputText value="Pesquisa:" />
+			                </div>
+			                <div class="col-md-2">
+			                <p:inputText id="globalFilter" onkeyup="PF('osTable').filter()" style="width:150px" placeholder="Pesquisa"/>
+			               	</div>
+			           </div>
+			        </f:facet>
+			        
+			        <p:column filterBy="#{os.id}" headerText="ID"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.id}" />
+        			</p:column>
+					
+					<p:column filterBy="#{os.veiculo.placa}" headerText="Placa"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.veiculo.placa}" />
+        			</p:column>
+        
+					
+					<p:column filterBy="#{os.veiculo.cliente.cpf}" headerText="cpf"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.veiculo.cliente.cpf}" />
+        			</p:column>
+        
+					
+					<p:column>
+						<f:facet name="header">Data Orçamento</f:facet>
+						<h:outputText value="#{os.dataOrcamento.time}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">Data Serviço</f:facet>
+						<h:outputText value="#{os.dataServico.time}">
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">Valor R$</f:facet>
+						#{os.valor}
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">Status</f:facet>
+						#{os.status}
+					</p:column>
+
+					<p:column>
+						<f:facet name="header">Servico</f:facet>
+						#{os.servico}
+					</p:column>
+
+
+					<p:column>
+						<div class="row">
+							<f:facet name="header">Ações</f:facet>
+
+							<h:commandButton value="Concluir"
+								styleClass="btn  btn-primary btn-sm"
+								action="#{ordemServicoBean.conclui(os)}"
+								rendered="#{os.status.equals('Aprovada') }">
+								<f:ajax render="@form"></f:ajax>
+							</h:commandButton>
+
+							<h:commandButton value="Aprovar"
+								styleClass="btn  btn-primary btn-sm"
+								action="#{ordemServicoBean.aprova(os)}"
+								rendered="#{os.status.equals('Criada') }">
+								<f:ajax render="@form"></f:ajax>
+							</h:commandButton>
+
+
+							<h:commandButton value="alterar" styleClass="btn  btn-primary btn-sm" action="#{ordemServicoBean.carregaVeiculo(os.veiculo.id)}">
+								<f:setPropertyActionListener value="#{os}" 
+									target="#{ordemServicoBean.ordemServico}"></f:setPropertyActionListener>
+									
+								<f:setPropertyActionListener value="#{os.itens}"
+									target="#{ordemServicoBean.ordemServico.itens}"></f:setPropertyActionListener>
+								<f:ajax render=":cadastro :cadastroPeca"></f:ajax>
+							</h:commandButton>
+
+						
+							<h:commandButton styleClass="btn  btn-danger btn-sm"
+								value="remover" action="#{ordemServicoBean.remove(os)}"
+								onclick="return confirm('Deseja fazer a Exclusão ?');">
+
+								<f:ajax render="@form"></f:ajax>
+							</h:commandButton>
+						</div>
+
+
+					</p:column>
+				</p:dataTable>
+			</h:form>
+		</ui:define>
+
+
+	</ui:composition>
+</h:body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

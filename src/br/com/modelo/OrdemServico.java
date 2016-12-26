@@ -1,8 +1,10 @@
 package br.com.modelo;
 
+import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Collection;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -18,6 +20,8 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name="ordemserv")
 public class OrdemServico {
+	
+	
 	@Id
 	@SequenceGenerator(name="IdOrdemServico", sequenceName="seq_ordemservico")
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="IdOrdemServico")
@@ -36,13 +40,15 @@ public class OrdemServico {
 	private float valor;
 	
 	//@NotEmpty(message="O campo status não deve ser vazio!")
-	private String status; 
+	private String status = "Criada"; 
 	
 	//@NotEmpty(message="O campo servico não deve ser vazio!")
 	private String servico;
 	
-	@OneToMany(fetch = FetchType.EAGER)
-	private List<Peca> pecaList;
+	@OneToMany(cascade=CascadeType.ALL, mappedBy="ordemServico", fetch = FetchType.EAGER, orphanRemoval=true)
+	private Collection<Item> itens = new ArrayList<>();
+	
+
 	
 	public Long getId() {
 		return id;
@@ -84,14 +90,17 @@ public class OrdemServico {
 	public String getServico() {
 		return servico;
 	}
+	
 	public void setServico(String servico) {
 		this.servico = servico;
 	}
-	public List<Peca> getPecaList() {
-		return pecaList;
+	
+	public Collection<Item> getItens() {
+		return itens;
 	}
-	public void setPecaList(List<Peca> pecaList) {
-		this.pecaList = pecaList;
+	
+	public void setItens(Collection<Item> itens) {
+		this.itens = itens;
 	}
 	
 }

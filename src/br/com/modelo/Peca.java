@@ -27,6 +27,9 @@ public class Peca {
 	@NotEmpty(message="O campo marca não deve ser vazio!")
 	private String marca;
 	
+	/*@NotEmpty(message="O campo quantidade não deve ser vazio!")*/
+	private Integer quantidade;
+	
 	
 	public Long getId() {
 		return id;
@@ -57,6 +60,12 @@ public class Peca {
 	}
 	public void setMarca(String marca) {
 		this.marca = marca;
+	}
+	public Integer getQuantidade() {
+		return quantidade;
+	}
+	public void setQuantidade(Integer quantidade) {
+		this.quantidade = quantidade;
 	}
 	
 	
