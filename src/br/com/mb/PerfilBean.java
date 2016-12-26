@@ -1,13 +1,14 @@
-package br.com.constantes;
+package br.com.mb;
 
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
-@SessionScoped
+
 @ManagedBean
-public class Perfil {
+@ViewScoped
+public class PerfilBean {
 	 private String gerente = "admin";
-	 private String mecanico = "admin";
+	 private String mecanico = "mecanico";
 	 private String recepcionista = "admin";
 	public String getGerente() {
 		return gerente;
