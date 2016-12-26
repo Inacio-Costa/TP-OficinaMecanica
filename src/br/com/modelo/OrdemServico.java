@@ -27,7 +27,7 @@ public class OrdemServico {
 	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator="IdOrdemServico")
 	private Long id;
 	
-	@OneToOne
+	@OneToOne(cascade=CascadeType.ALL)
 	private Veiculo veiculo;
 	
 	@Temporal(TemporalType.DATE)

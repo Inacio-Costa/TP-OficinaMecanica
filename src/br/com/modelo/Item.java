@@ -18,7 +18,6 @@ public class Item {
 
 	
 	@ManyToOne(cascade={CascadeType.MERGE, CascadeType.REFRESH})
-	
 	private Peca peca;
 	
 	@ManyToOne

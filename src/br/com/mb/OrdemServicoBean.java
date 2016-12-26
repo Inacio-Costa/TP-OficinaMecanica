@@ -19,6 +19,7 @@ public class OrdemServicoBean {
 	private OrdemServico ordemServico  = new OrdemServico();	
 	private List<OrdemServico> ordemServicoList;
 	private List<OrdemServico> ordemServicoFilter;
+	private Boolean retiraPeca = false;
 	
 	private Item item = new  Item();
 	
@@ -77,6 +78,17 @@ public class OrdemServicoBean {
 	public void setOrdemServicoFilter(List<OrdemServico> ordemServicoFilter) {
 		this.ordemServicoFilter = ordemServicoFilter;
 	}
+	
+
+	public Boolean getRetiraPeca() {
+		return retiraPeca;
+	}
+
+	public void setRetiraPeca(Boolean retiraPeca) {
+		this.retiraPeca = retiraPeca;
+	}
+	
+	
 
 	public void grava() {
 		
@@ -139,6 +151,7 @@ public class OrdemServicoBean {
 	public void cancela() {
 		ordemServico = new OrdemServico();
 		idVeiculo = 0L;
+		retiraPeca = false;
 	}
 	
 	public void adicionaItem(){
@@ -175,16 +188,25 @@ public class OrdemServicoBean {
 		
 			ordemServico.getItens().remove(item);
 			
-			item.setOrdemServico(ordemServico);
+			//item.setOrdemServico(ordemServico);
 			
-			new DAO<>(OrdemServico.class).atualiza(ordemServico);
+			//new DAO<>(OrdemServico.class).atualiza(ordemServico);
+			new DAO<>(Item.class).remove(item);
 			
 			ordemServicoList = new DAO<>(OrdemServico.class).listaTodos();
 	}
 	
 	public void carregaVeiculo(Long id){
+		retiraPeca = false;
 		idVeiculo = id;
 	}
+	
+	
+	
+	public void retirarPeca(){
+		retiraPeca = true;
+	}
+	
 	
 
 }

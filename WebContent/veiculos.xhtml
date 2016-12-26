@@ -10,9 +10,10 @@
 
 	<ui:define name="corpo">
 
-		<h:form id="cadastro">
+		<!-- Formulário -->
+		<h:form id="cadastro"
+			rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 
-			<!-- Formulário -->
 			<p:messages styleClass="erros" />
 			<h2>
 				<h:outputText
@@ -70,8 +71,11 @@
 		<h2>
 			<h:outputText value="Lista de Veículos" />
 		</h2>
+
 		<!-- Tabela de veículos -->
 		<h:form id="lista">
+			<p:messages styleClass="erros"
+				rendered="#{loginBean.usuario.papel != perfilBean.recepcionista}" />
 			<p:dataTable value="#{veiculoBean.veiculos}" var="veiculo"
 				paginator="true" rows="5" widgetVar="veiculoTable"
 				emptyMessage="Nenhum resultado encontrado..."
@@ -119,18 +123,23 @@
 						#{veiculo.anoModelo}
 				</p:column>
 
-				<p:column headerText="Nome Cliente">
+				<p:column headerText="Nome Cliente"
+					filterBy="#{veiculo.cliente.nome}" filterMatchMode="contains"
+					filterStyle="display:none">
 						#{veiculo.cliente.nome}
 				</p:column>
 
-				<p:column headerText="CPF Cliente">
+				<p:column headerText="CPF Cliente" filterBy="#{veiculo.cliente.cpf}"
+					filterMatchMode="contains" filterStyle="display:none">
 						#{veiculo.cliente.cpf}
 				</p:column>
 
-				<p:column width="170">
+				<p:column width="170"
+					rendered="#{loginBean.usuario.papel != perfilBean.mecanico}">
 					<f:facet name="header">Ações</f:facet>
 
 					<h:commandLink value="Alterar"
+						rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}"
 						action="#{veiculoBean.carregaCliente(veiculo.cliente.id)}"
 						styleClass="btn btn-primary btn-sm">
 						<f:setPropertyActionListener value="#{veiculo}"
@@ -138,7 +147,10 @@
 						<f:ajax render=":cadastro"></f:ajax>
 					</h:commandLink>
 
-					<h:commandLink value="Remove" action="#{veiculoBean.remove(veiculo)}" onclick="return confirm('Deseja fazer a Exclusão ?');"
+					<h:commandLink value="Remove"
+						rendered="#{loginBean.usuario.papel == perfilBean.gerente}"
+						action="#{veiculoBean.remove(veiculo)}"
+						onclick="return confirm('Deseja fazer a Exclusão ?');"
 						styleClass="btn btn-danger btn-sm">
 						<f:ajax render="@form"></f:ajax>
 					</h:commandLink>

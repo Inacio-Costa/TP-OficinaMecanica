@@ -7,9 +7,9 @@ import javax.faces.bean.ViewScoped;
 @ManagedBean
 @ViewScoped
 public class PerfilBean {
-	 private String gerente = "admin";
+	 private String gerente = "gerente";
 	 private String mecanico = "mecanico";
-	 private String recepcionista = "admin";
+	 private String recepcionista = "recepcionista";
 	public String getGerente() {
 		return gerente;
 	}

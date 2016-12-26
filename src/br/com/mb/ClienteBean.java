@@ -2,8 +2,11 @@ package br.com.mb;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.persistence.RollbackException;
 
 import br.com.dao.DAO;
 import br.com.modelo.Cliente;
@@ -63,8 +66,13 @@ public class ClienteBean {
 	}
 	
 	public void remove(Cliente Cliente) {
-		DAO<Cliente> dao = new DAO<Cliente>(Cliente.class);
-		dao.remove(Cliente);
-		this.clientes = dao.listaTodos();
+		try{	
+			DAO<Cliente> dao = new DAO<Cliente>(Cliente.class);
+			dao.remove(Cliente);
+			this.clientes = dao.listaTodos();
+		}catch (RollbackException e) {
+			FacesMessage msg = new FacesMessage("Remova primeiro seus veículos!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);
+		}
 	}
 }

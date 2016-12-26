@@ -11,15 +11,18 @@
 		<ui:define name="corpo">
 
 			<!-- Formulário -->
-			<h2> 
-				<h:outputText value="#{empty pecaBean.peca.id ? 'Novo Serviço' : 'Editar Serviço'}"/>
-			</h2>
-			<h:form id="cadastro">
+			
+			<h:form id="cadastro" rendered="#{perfilBean.mecanico == loginBean.usuario.papel or perfilBean.recepcionista == loginBean.usuario.papel }">
+				<h2> 
+					<h:outputText value="#{empty ordemServicoBean.ordemServico.id ? 'Novo Serviço' : 'Editar Serviço'}" 
+						rendered="#{not ordemServicoBean.retiraPeca}"/>
+					<h:outputText value="Retirar peças" rendered="#{ordemServicoBean.retiraPeca}"/>
+				</h2>
 				<p:messages styleClass="erros"/>
 				
-				<p:tabView id="cadastro">
+				<p:tabView id="cadastrotabs" >
 
-					<p:tab title="Serviço">
+					<p:tab title="Serviço" rendered="#{not ordemServicoBean.retiraPeca}">
 
 						<p:outputLabel value="Veiculo" for="veiculo" />
 						<p:selectOneMenu value="#{ordemServicoBean.idVeiculo}"
@@ -56,7 +59,7 @@
 					<p:tab title="Peças">
 						<p:messages />
 
-						<div class="row" >
+						<h:panelGroup class="row" rendered="#{not ordemServicoBean.retiraPeca}">
 							<div class="col-md-4">
 								<p:outputLabel value="Peças" for="peca" />
 								<p:selectOneMenu value="#{ordemServicoBean.idPeca}" id="peca">
@@ -78,9 +81,9 @@
 								</p:commandButton>
 							</div>
 
-						</div>
+						</h:panelGroup>
 						
-						<p:dataTable id="pecas" scrollable="true" scrollHeight="150" emptyMessage="Nenhum resultado a ser encontrado..."
+						<p:dataTable id="pecas" scrollable="true" scrollHeight="150" emptyMessage="Nenhum resultado encontrado..."
 							value="#{ordemServicoBean.ordemServico.itens}" var="item">
 							
 							
@@ -106,10 +109,11 @@
 							
 							<p:column>
 								<f:facet name="header">Ações</f:facet>
+								
 								<p:commandButton action="#{ordemServicoBean.removeItem(item)}"
 									value="retirar" styleClass="btn btn-danger btn-sm"
-									onclick="return confirm('Deseja fazer a Exclusão ?');" process="@form" render="pecas" >
-									<!-- <f:ajax execute="@form" render=":pecas" ></f:ajax> -->
+									onclick="return confirm('Deseja fazer a Exclusão ?');"  > 
+									<f:ajax render=":cadastro :lista" ></f:ajax>
 								</p:commandButton>
 							</p:column>
 
@@ -120,9 +124,9 @@
 
 				</p:tabView>
 				
-				<div class="row">
+				<h:panelGroup styleClass="row">
 					<div class="col-md-offset-1 col-md-6">
-						<h:commandButton
+						<h:commandButton rendered="#{not ordemServicoBean.retiraPeca}"
 							value="#{empty ordemServicoBean.ordemServico.id ? 'Gravar' : 'Atualizar'}"
 							action="#{ordemServicoBean.grava}"
 							styleClass="btn btn-primary btn-sm">
@@ -132,19 +136,19 @@
 						<h:commandButton value="Cancelar"
 							action="#{ordemServicoBean.cancela}"
 							styleClass="btn btn-primary btn-sm">
-							<f:ajax execute="@form" render=":cadastro"/>
+							<f:ajax  execute="@form" render=":cadastro"/>
 						</h:commandButton>
 					</div>
-				</div>
+				</h:panelGroup>
 			</h:form>
 
-			<!-- Lista de peças -->
+			<!-- Lista de ordem de serviço -->
 			<h2> 
 				<h:outputText value="Lista de Serviços"/>
 			</h2>
 			<h:form id="lista">
 				<p:dataTable value="#{ordemServicoBean.ordemServicos}" var="os" filteredValue="#{ordemServicoBean.ordemServicoFilter}"
-					paginator="true" rows="4" emptyMessage="Nenhum resultado a ser encontrado...">
+					paginator="true" rows="4" emptyMessage="Nenhum resultado encontrado..." widgetVar="osTable">
 
 					<!-- Filtro -->
 					 <f:facet name="header">
@@ -159,11 +163,20 @@
 			           </div>
 			        </f:facet>
 
-					<p:column>
-						<f:facet name="header">Placa</f:facet>
-						#{os.veiculo.placa}
-						
-					</p:column>
+					<p:column filterBy="#{os.id}" headerText="ID"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.id}" />
+        			</p:column>
+					
+					<p:column filterBy="#{os.veiculo.placa}" headerText="Placa"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.veiculo.placa}" />
+        			</p:column>
+        
+					
+					<p:column filterBy="#{os.veiculo.cliente.cpf}" headerText="cpf"  filterMatchMode="contains" filterStyle="display:none">
+        			    <h:outputText value="#{os.veiculo.cliente.cpf}" />
+        			</p:column>
+        
+					
 					<p:column>
 						<f:facet name="header">Data Orçamento</f:facet>
 						<h:outputText value="#{os.dataOrcamento.time}">
@@ -184,7 +197,7 @@
 						#{os.valor}
 					</p:column>
 
-					<p:column>
+					<p:column filterBy="#{os.status}"  filterMatchMode="contains" filterStyle="display:none">
 						<f:facet name="header">Status</f:facet>
 						#{os.status}
 					</p:column>
@@ -204,34 +217,44 @@
 							<h:commandButton value="Aprovar"
 								styleClass="btn  btn-primary btn-sm"
 								action="#{ordemServicoBean.aprova(os)}"
-								rendered="#{os.status.equals('Criada') }">
+								rendered="#{os.status.equals('Criada') and perfilBean.recepcionista.equals(loginBean.usuario.papel)}">
 								<f:ajax render="@form"></f:ajax>
 							</h:commandButton>
 							
 							<h:commandButton value="Concluir"
 								styleClass="btn  btn-primary btn-sm"
 								action="#{ordemServicoBean.conclui(os)}"
-								rendered="#{os.status.equals('Aprovada') }">
+								rendered="#{os.status.equals('Aprovada') and perfilBean.gerente.equals(loginBean.usuario.papel) }">
 								<f:ajax render="@form"></f:ajax>
 							</h:commandButton>
 							
 							<h:commandButton value="Pagamento"
 								styleClass="btn  btn-primary btn-sm"
 								action="#{ordemServicoBean.pagamento(os)}"
-								rendered="#{os.status.equals('Concluída') }">
+								rendered="#{os.status.equals('Concluída') and perfilBean.gerente.equals(loginBean.usuario.papel)}">
 								<f:ajax render="@form"></f:ajax>
 							</h:commandButton>
 
 
+							<h:commandButton value="Retirar Peça"
+								styleClass="btn btn-primary btn-sm"
+								action="#{ordemServicoBean.retirarPeca}"
+								rendered="#{loginBean.usuario.papel == perfilBean.mecanico}">
+								<f:setPropertyActionListener value="#{os.itens}" target="#{ordemServicoBean.ordemServico.itens}" ></f:setPropertyActionListener>
+								<f:ajax render=":cadastro"></f:ajax>
+							</h:commandButton>
+
 							<h:commandButton value="alterar"
 								styleClass="btn btn-primary btn-sm"
-								action="#{ordemServicoBean.carregaVeiculo(os.veiculo.id)}">
+								action="#{ordemServicoBean.carregaVeiculo(os.veiculo.id)}"
+								rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 								<f:setPropertyActionListener value="#{os}" target="#{ordemServicoBean.ordemServico}" ></f:setPropertyActionListener>
 								<f:ajax render=":cadastro"></f:ajax>
 							</h:commandButton>
 
 
-							<h:commandLink styleClass="btn  btn-danger btn-sm"
+							<h:commandLink styleClass="btn  btn-danger btn-sm" 
+								rendered="#{loginBean.usuario.papel == perfilBean.gerente}"
 								value="remover" action="#{ordemServicoBean.remove(os)}"
 								onclick="return confirm('Deseja fazer a Exclusão ?');">
 								<f:ajax render="@form"></f:ajax>

@@ -6,22 +6,21 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.persistence.RollbackException;
 
 import br.com.dao.DAO;
 import br.com.modelo.Cliente;
 import br.com.modelo.Veiculo;
 
-
 @ManagedBean
 @ViewScoped
 public class VeiculoBean {
 	private Veiculo veiculo = new Veiculo();
-	
+
 	private List<Veiculo> veiculos;
 	private List<Veiculo> veiculoFilter;
-	
+
 	private Long idCliente;
-	
 
 	public Long getIdCliente() {
 		return idCliente;
@@ -38,8 +37,8 @@ public class VeiculoBean {
 	public void setVeiculo(Veiculo veiculo) {
 		this.veiculo = veiculo;
 	}
-	
-	
+
+
 	public List<Veiculo> getVeiculoFilter() {
 		return veiculoFilter;
 	}
@@ -54,26 +53,26 @@ public class VeiculoBean {
 			FacesContext.getCurrentInstance().addMessage("erro", msg);
 			return null;
 		}
-		
+
 		Cliente cliente = new DAO<Cliente>(Cliente.class).buscaPorld(idCliente);
 		veiculo.setCliente(cliente);
-		
+
 		DAO<Veiculo> dao = new DAO<Veiculo>(Veiculo.class);
-		
+
 		if (veiculo.getId()==null)
 			dao.adiciona(veiculo);
 		else{
 			dao.atualiza(veiculo);
 			System.err.println("Alterando veiculo");
 		}
-		
-		
+
+
 		veiculo = new Veiculo();
 		veiculos = dao.listaTodos();
-		
+
 		return "veiculo?faces-redirect=true";
 	}
-	
+
 	public void cancela(){
 		veiculo = new Veiculo();
 		idCliente = null;
@@ -87,19 +86,25 @@ public class VeiculoBean {
 		return veiculos;		
 	}
 
-	
+
 	public void setVeiculos(List<Veiculo> veiculos) {
 		this.veiculos = veiculos;
 	}
-	
+
 	public void remove(Veiculo veiculo){
-		DAO<Veiculo> dao =new DAO<Veiculo>(Veiculo.class);
-		dao.remove(veiculo);		
-		this.veiculos = dao.listaTodos();
+		try{
+			DAO<Veiculo> dao =new DAO<Veiculo>(Veiculo.class);
+			dao.remove(veiculo);		
+			this.veiculos = dao.listaTodos();
+		
+		}catch (RollbackException e) {
+			FacesMessage msg = new FacesMessage("Remova as ordem de serviço referente ao veiculo!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);
+		}
 	}
-	
+
 	public void carregaCliente(Long id){
 		idCliente = id;
 	}
-	
+
 }

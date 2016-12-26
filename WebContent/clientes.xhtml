@@ -10,7 +10,7 @@
 	<ui:composition template="/template.xhtml">
 		<ui:define name="corpo">
 			
-			<h:form id="cadastro" >
+			<h:form id="cadastro" rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 				<p:messages styleClass="erros"/>
 				
 				<h2> 
@@ -64,6 +64,9 @@
 				<h:outputText value="Lista de Clientes"/>
 			</h2>
 			<h:form id="lista">
+				<p:messages styleClass="erros"
+					rendered="#{loginBean.usuario.papel != perfilBean.recepcionista}" />
+					
 				<p:dataTable value="#{clienteBean.clientes}" var="cliente"   paginator="true" rows="4" widgetVar="clienteTable"
 					emptyMessage="Nenhum resultado encontrado..." filteredValue="#{clienteBean.clientesFilter}">
 					
@@ -110,13 +113,16 @@
 						<f:facet name="header">Ações</f:facet>
 						
 						<!-- Altera -->						
-						<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm" >
+						<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm" 
+							rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">>
 							<f:setPropertyActionListener value="#{cliente}" target="#{clienteBean.cliente}"></f:setPropertyActionListener>
 							<f:ajax render=":cadastro"></f:ajax>
 						</h:commandLink>
 					
 						<!-- Remoção -->
-					    <h:commandLink  value="Remover" action="#{clienteBean.remove(cliente)}" styleClass="btn btn-danger btn-sm" onclick="return confirm('Deseja fazer a Exclusão ?');">
+					    <h:commandLink  value="Remover" action="#{clienteBean.remove(cliente)}" styleClass="btn btn-danger btn-sm" 
+					    	onclick="return confirm('Deseja fazer a Exclusão ?');"
+					    	rendered="#{loginBean.usuario.papel == perfilBean.gerente}">
 					    	<f:ajax render="@form"></f:ajax>    
 					    </h:commandLink>
 					    
