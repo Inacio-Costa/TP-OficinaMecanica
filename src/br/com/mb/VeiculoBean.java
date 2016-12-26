@@ -19,8 +19,14 @@ public class VeiculoBean {
 
 	private List<Veiculo> veiculos;
 	private List<Veiculo> veiculoFilter;
+	private DAO<Veiculo> dao;
 
 	private Long idCliente;
+	
+
+	public VeiculoBean() {
+		 dao = new DAO<Veiculo>(Veiculo.class);
+	}
 
 	public Long getIdCliente() {
 		return idCliente;
@@ -57,12 +63,12 @@ public class VeiculoBean {
 		Cliente cliente = new DAO<Cliente>(Cliente.class).buscaPorld(idCliente);
 		veiculo.setCliente(cliente);
 
-		DAO<Veiculo> dao = new DAO<Veiculo>(Veiculo.class);
-
-		if (veiculo.getId()==null)
+		if (veiculo.getId()==null){
 			dao.adiciona(veiculo);
-		else{
+			veiculos.add(veiculo);
+		}else{
 			dao.atualiza(veiculo);
+			veiculos.set(veiculos.indexOf(veiculo), veiculo);
 			System.err.println("Alterando veiculo");
 		}
 
@@ -80,7 +86,6 @@ public class VeiculoBean {
 
 	public List<Veiculo> getVeiculos() {
 		if (veiculos==null){
-			DAO<Veiculo> dao = new DAO<Veiculo>(Veiculo.class);
 			veiculos = dao.listaTodos();
 		}
 		return veiculos;		
@@ -93,9 +98,9 @@ public class VeiculoBean {
 
 	public void remove(Veiculo veiculo){
 		try{
-			DAO<Veiculo> dao =new DAO<Veiculo>(Veiculo.class);
-			dao.remove(veiculo);		
-			this.veiculos = dao.listaTodos();
+			dao.remove(veiculo);
+			veiculos.remove(veiculo);
+			//this.veiculos = dao.listaTodos();
 		
 		}catch (RollbackException e) {
 			FacesMessage msg = new FacesMessage("Remova as ordem de serviço referente ao veiculo!");

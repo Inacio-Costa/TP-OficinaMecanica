@@ -20,6 +20,7 @@ public class OrdemServicoBean {
 	private List<OrdemServico> ordemServicoList;
 	private List<OrdemServico> ordemServicoFilter;
 	private Boolean retiraPeca = false;
+	private DAO<OrdemServico> dao;
 	
 	private Item item = new  Item();
 	
@@ -28,6 +29,7 @@ public class OrdemServicoBean {
 
 	public OrdemServicoBean() {
 		System.err.println("Instancianando novamente");
+		dao = new DAO<OrdemServico>(OrdemServico.class);
 	}
 	
 	public Long getIdVeiculo() {
@@ -94,56 +96,52 @@ public class OrdemServicoBean {
 		
 		if (idVeiculo == null) return;
 		
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		Veiculo veiculo = new DAO<Veiculo>(Veiculo.class).buscaPorld(idVeiculo);
 		
 		ordemServico.setVeiculo(veiculo);
 		
 		if (ordemServico.getId() == null) {
 			dao.adiciona(ordemServico);
+			ordemServicoList.add(ordemServico);
 		}else{
 			dao.atualiza(ordemServico);
+			ordemServicoList.set(ordemServicoList.indexOf(ordemServico), ordemServico);
 		}
-		
 		
 		ordemServico = new OrdemServico();
 		item = new Item();
 		idVeiculo = null;
 		
-		ordemServicoList = dao.listaTodos();
+		//ordemServicoList = dao.listaTodos();
 		
 		//return "wizard?faces-redirect=true";
 	}
 	
-	public void remove(OrdemServico OrdemServico) {
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
-		dao.remove(OrdemServico);
-		
-		this.ordemServicoList = dao.listaTodos();
+	public void remove(OrdemServico ordemServico) {
+		dao.remove(ordemServico);
+		ordemServicoList.remove(ordemServico);
+		//this.ordemServicoList = dao.listaTodos();
 	}
 	
 	public List<OrdemServico> getOrdemServicos() {
 		if (ordemServicoList == null) {
-			ordemServicoList = new DAO<OrdemServico>(OrdemServico.class).listaTodos();
+			ordemServicoList = dao.listaTodos();
 		}
 		return ordemServicoList;
 	}
 	
 	
 	public void aprova(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Aprovada");
 		dao.atualiza(ordemServico);
 	}
 	
 	public void conclui(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Concluída");
 		dao.atualiza(ordemServico);
 	}
 	
 	public void pagamento(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Pago");
 		dao.atualiza(ordemServico);
 	}

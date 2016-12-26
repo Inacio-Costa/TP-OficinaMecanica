@@ -20,8 +20,13 @@ public class ClienteBean {
 	
 	private List<Cliente> clientes;
 	private List<Cliente> clientesFilter;
+	private DAO<Cliente> dao;
 	
 	
+	public ClienteBean() {
+		dao = new DAO<Cliente>(Cliente.class);
+	}
+
 	public Cliente getCliente() {
 		return cliente;
 	}
@@ -42,21 +47,22 @@ public class ClienteBean {
 		this.clientes = clientes;
 	}
 
-	public void grava() {
-		DAO<Cliente> dao = new DAO<Cliente>(Cliente.class);
-		
-		if (cliente.getId() == null)
+	public void grava() {		
+		if (cliente.getId() == null){
 			dao.adiciona(cliente);
-		else
+			clientes.add(cliente);
+		}else{
 			dao.atualiza(cliente);
+			clientes.set(clientes.indexOf(cliente), cliente);
+		}
 		
 		this.cliente = new Cliente();
-		this.clientes = dao.listaTodos();
+		//this.clientes = dao.listaTodos();
 	}
 	
 	public List<Cliente> getClientes() {
 		if (clientes == null) {
-			clientes = new DAO<Cliente>(Cliente.class).listaTodos();
+			clientes = dao.listaTodos();
 		}
 		return clientes;
 	}
@@ -65,11 +71,11 @@ public class ClienteBean {
 		this.cliente = new Cliente();
 	}
 	
-	public void remove(Cliente Cliente) {
-		try{	
-			DAO<Cliente> dao = new DAO<Cliente>(Cliente.class);
-			dao.remove(Cliente);
-			this.clientes = dao.listaTodos();
+	public void remove(Cliente cliente) {
+		try{			
+			dao.remove(cliente);
+			clientes.remove(cliente);
+			//this.clientes = dao.listaTodos();
 		}catch (RollbackException e) {
 			FacesMessage msg = new FacesMessage("Remova primeiro seus veículos!");
 			FacesContext.getCurrentInstance().addMessage("erro", msg);
