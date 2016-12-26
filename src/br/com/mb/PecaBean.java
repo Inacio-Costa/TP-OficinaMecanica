@@ -2,29 +2,28 @@ package br.com.mb;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import javax.persistence.RollbackException;
 
 import br.com.dao.DAO;
 import br.com.modelo.Peca;
 
-
-
 @ViewScoped
 @ManagedBean
 public class PecaBean {
-	private Peca Peca = new Peca();
-	private List<Peca> Pecas;
+	private Peca peca = new Peca();
+	private List<Peca> pecas;
 	private List<Peca> pecaFilter;
 	
-	
-	
 	public Peca getPeca() {
-		return Peca;
+		return peca;
 	}
 	
 	public void setPeca(Peca Peca) {
-		this.Peca = Peca;
+		this.peca = Peca;
 	}
 	
 	public List<Peca> getPecaFilter() {
@@ -36,35 +35,40 @@ public class PecaBean {
 	}
 
 	public void setPecas(List<Peca> pecas) {
-		Pecas = pecas;
+		this.pecas = pecas;
 	}
 
 	public void grava() {
 		DAO<Peca> dao = new DAO<Peca>(Peca.class);
-		if (Peca.getId() == null) {
-			dao.adiciona(Peca);
-		}
-		else
-			dao.atualiza(Peca);
 		
-		this.Peca = new Peca();
-		this.Pecas = dao.listaTodos();
+		if (peca.getId() == null)
+			dao.adiciona(peca);
+		else
+			dao.atualiza(peca);
+		
+		this.peca = new Peca();
+		this.pecas = dao.listaTodos();
 	}
 	
 	public List<Peca> getPecas() {
-		if (Pecas == null) {
-			Pecas = new DAO<Peca>(Peca.class).listaTodos();
+		if (pecas == null) {
+			pecas = new DAO<Peca>(Peca.class).listaTodos();
 		}
-		return Pecas;
+		return pecas;
 	}
 	
 	public void remove(Peca Peca) {
-		DAO<Peca> dao = new DAO<Peca>(Peca.class);
-		dao.remove(Peca);
-		this.Pecas = dao.listaTodos();
+		try{
+			DAO<Peca> dao = new DAO<Peca>(Peca.class);
+			dao.remove(Peca);
+			this.pecas = dao.listaTodos();
+		}catch (RollbackException e) {
+			FacesMessage msg = new FacesMessage("Você não pode excluir uma peça usada em uma ordem de serviço!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);
+		}
 	}
 	
 	public void cancela() {
-		this.Peca = new Peca();
+		this.peca = new Peca();
 	}
 }

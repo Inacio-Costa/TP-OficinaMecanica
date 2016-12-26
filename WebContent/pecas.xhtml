@@ -6,14 +6,14 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui">
 
-
-
 <ui:composition template="/template.xhtml">
 
 	<ui:define name="corpo">
 
 		<!-- Formulário -->
-		<h:form id="cadastro">
+		<h:form id="cadastro"
+			rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
+
 			<p:messages styleClass="erros" />
 			<h2>
 				<h:outputText
@@ -63,6 +63,9 @@
 		</h2>
 		<!-- Lista de peças -->
 		<h:form id="lista" update="message">
+
+			<p:messages styleClass="erros"
+				rendered="#{loginBean.usuario.papel != perfilBean.recepcionista}" />
 
 			<p:dataTable value="#{pecaBean.pecas}" var="peca" paginator="true"
 				rows="4" widgetVar="pecaTable"
@@ -115,9 +118,13 @@
 						#{peca.quantidade}
 					</p:column>
 
-				<p:column width="170">
+				<p:column width="170"
+					rendered="#{loginBean.usuario.papel != perfilBean.mecanico}">
 					<f:facet name="header">Ações</f:facet>
-					<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm">
+
+					<!-- Alteração -->
+					<h:commandLink value="Alterar" styleClass="btn btn-primary btn-sm"
+						rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 						<f:setPropertyActionListener value="#{peca}"
 							target="#{pecaBean.peca}"></f:setPropertyActionListener>
 						<f:ajax render=":cadastro"></f:ajax>
@@ -125,6 +132,7 @@
 
 					<!-- Remoção -->
 					<h:commandLink styleClass="btn btn-sm btn-danger" value="remover"
+						rendered="#{loginBean.usuario.papel == perfilBean.gerente}"
 						action="#{pecaBean.remove(peca)}" update="message"
 						onclick="return confirm('Deseja fazer a Exclusão ?');">
 						<f:ajax render=":lista"></f:ajax>
