@@ -76,6 +76,7 @@ public class VeiculoBean {
 	
 	public void cancela(){
 		veiculo = new Veiculo();
+		idCliente = null;
 	}
 
 	public List<Veiculo> getVeiculos() {

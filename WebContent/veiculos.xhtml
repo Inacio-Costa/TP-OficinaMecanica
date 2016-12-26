@@ -130,7 +130,7 @@
 				<p:column width="170">
 					<f:facet name="header">Ações</f:facet>
 
-					<h:commandLink value="alterar"
+					<h:commandLink value="Alterar"
 						action="#{veiculoBean.carregaCliente(veiculo.cliente.id)}"
 						styleClass="btn btn-primary btn-sm">
 						<f:setPropertyActionListener value="#{veiculo}"
@@ -138,9 +138,7 @@
 						<f:ajax render=":cadastro"></f:ajax>
 					</h:commandLink>
 
-					<h:commandLink value="remover"
-						action="#{veiculoBean.remove(veiculo)}"
-						onclick="return confirm('Deseja fazer a Exclusão ?');"
+					<h:commandLink value="Remove" action="#{veiculoBean.remove(veiculo)}" onclick="return confirm('Deseja fazer a Exclusão ?');"
 						styleClass="btn btn-danger btn-sm">
 						<f:ajax render="@form"></f:ajax>
 					</h:commandLink>
