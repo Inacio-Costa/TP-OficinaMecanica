@@ -12,18 +12,19 @@
 
 			<!-- Formulário -->
 			
-			<h:form id="cadastro" rendered="#{perfilBean.mecanico == loginBean.usuario.papel or perfilBean.recepcionista == loginBean.usuario.papel }">
+			<h:form id="cadastro" dynamic="true"  rendered="#{perfilBean.mecanico == loginBean.usuario.papel or perfilBean.recepcionista == loginBean.usuario.papel }">
+				<p:messages styleClass="erros"/>
+			
 				<h2> 
-					<h:outputText value="#{empty ordemServicoBean.ordemServico.id ? 'Novo Serviço' : 'Editar Serviço'}" 
+					<h:outputText value="#{(ordemServicoBean.ordemServico.id == null) ? 'Novo Serviço' : 'Editar Serviço'}" 
 						rendered="#{not ordemServicoBean.retiraPeca}"/>
 					<h:outputText value="Retirar peças" rendered="#{ordemServicoBean.retiraPeca}"/>
 				</h2>
-				<p:messages styleClass="erros"/>
 				
-				<p:tabView id="cadastrotabs" >
+				
+				<p:tabView id="cadastrotabs" activeIndex="#{ordemServicoBean.tab}" >
 
-					<p:tab title="Serviço" rendered="#{not ordemServicoBean.retiraPeca}">
-
+					<p:tab title="Serviço" disabled="#{ordemServicoBean.retiraPeca}">
 						<p:outputLabel value="Veiculo" for="veiculo" />
 						<p:selectOneMenu value="#{ordemServicoBean.idVeiculo}"
 							id="veiculo">
@@ -41,8 +42,9 @@
 							mask="99/99/9999" id="dataOrcamento" />
 
 						<p:outputLabel value="Servico" for="servico" />
-						<p:inputTextarea id="servico" cols="50"
-							value="#{ordemServicoBean.ordemServico.servico}"></p:inputTextarea>
+						<p:inputTextarea id="servico" cols="50" requiredMessage="Digite o serviço" required="true"
+							value="#{ordemServicoBean.ordemServico.servico}">
+						</p:inputTextarea>
 
 						<p:outputLabel value="Valor: R$" for="valor" />
 						<p:inputText id="valor" size="10"
@@ -57,7 +59,7 @@
 					</p:tab>
 
 					<p:tab title="Peças">
-						<p:messages />
+		
 
 						<h:panelGroup class="row" rendered="#{not ordemServicoBean.retiraPeca}">
 							<div class="col-md-4">
@@ -107,14 +109,15 @@
 								#{item.quantidade}
 							</p:column>
 							
-							<p:column>
+							<p:column rendered="#{ordemServicoBean.ordemServico.id == null or ordemServicoBean.retiraPeca}">
 								<f:facet name="header">Ações</f:facet>
 								
-								<p:commandButton action="#{ordemServicoBean.removeItem(item)}"
+								<h:commandButton action="#{ordemServicoBean.removeItem(item)}"
 									value="retirar" styleClass="btn btn-danger btn-sm"
-									onclick="return confirm('Deseja fazer a Exclusão ?');"  > 
-									<f:ajax render=":cadastro :lista" ></f:ajax>
-								</p:commandButton>
+									onclick="return confirm('Deseja fazer a Exclusão ?');" > 
+									<f:ajax execute="@form" render=":cadastro"></f:ajax>
+									
+								</h:commandButton>
 							</p:column>
 
 
@@ -126,17 +129,17 @@
 				
 				<h:panelGroup styleClass="row">
 					<div class="col-md-offset-1 col-md-6">
-						<h:commandButton rendered="#{not ordemServicoBean.retiraPeca}"
+						<h:commandButton 
 							value="#{empty ordemServicoBean.ordemServico.id ? 'Gravar' : 'Atualizar'}"
 							action="#{ordemServicoBean.grava}"
 							styleClass="btn btn-primary btn-sm">
-							<f:ajax execute="@form" render=":lista :cadastro"/>
+							<f:ajax  execute="@form" render=":cadastro :lista "/>
 						</h:commandButton>
 
 						<h:commandButton value="Cancelar"
 							action="#{ordemServicoBean.cancela}"
 							styleClass="btn btn-primary btn-sm">
-							<f:ajax  execute="@form" render=":cadastro"/>
+							<f:ajax execute="@form" render=":cadastro :lista"/>
 						</h:commandButton>
 					</div>
 				</h:panelGroup>
@@ -238,27 +241,27 @@
 
 							<h:commandButton value="Retirar Peça"
 								styleClass="btn btn-primary btn-sm"
-								action="#{ordemServicoBean.retirarPeca}"
-								rendered="#{loginBean.usuario.papel == perfilBean.mecanico}">
-								<f:setPropertyActionListener value="#{os.itens}" target="#{ordemServicoBean.ordemServico.itens}" ></f:setPropertyActionListener>
+								rendered="#{loginBean.usuario.papel == perfilBean.mecanico}"
+								action="#{ordemServicoBean.retirarPeca(os.veiculo.id)}">
+								<f:setPropertyActionListener value="#{os}" target="#{ordemServicoBean.ordemServico}" ></f:setPropertyActionListener>
 								<f:ajax render=":cadastro"></f:ajax>
 							</h:commandButton>
 
 							<h:commandButton value="alterar"
 								styleClass="btn btn-primary btn-sm"
 								action="#{ordemServicoBean.carregaVeiculo(os.veiculo.id)}"
-								rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
+								rendered="#{loginBean.usuario.papel == perfilBean.recepcionista or loginBean.usuario.papel == perfilBean.mecanico}">
 								<f:setPropertyActionListener value="#{os}" target="#{ordemServicoBean.ordemServico}" ></f:setPropertyActionListener>
 								<f:ajax render=":cadastro"></f:ajax>
 							</h:commandButton>
 
 
-							<h:commandLink styleClass="btn  btn-danger btn-sm" 
+							<h:commandButton styleClass="btn  btn-danger btn-sm" 
 								rendered="#{loginBean.usuario.papel == perfilBean.gerente}"
 								value="remover" action="#{ordemServicoBean.remove(os)}"
 								onclick="return confirm('Deseja fazer a Exclusão ?');">
 								<f:ajax render="@form"></f:ajax>
-							</h:commandLink>
+							</h:commandButton>
 						</div>
 					</p:column>
 				</p:dataTable>

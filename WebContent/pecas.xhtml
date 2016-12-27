@@ -11,7 +11,7 @@
 	<ui:define name="corpo">
 
 		<!-- Formulário -->
-		<h:form id="cadastro"
+		<h:form id="cadastro" update="message"
 			rendered="#{loginBean.usuario.papel == perfilBean.recepcionista}">
 
 			<p:messages styleClass="erros" />
@@ -34,7 +34,7 @@
 				<h:outputLabel value="Marca" for="marca" />
 				<p:inputText value="#{pecaBean.peca.marca}" id="marca" />
 
-				<h:outputLabel value="Quantidade" for="quantidade" />
+				<h:outputLabel value="Quantidade" for="quantidade"/>
 				<p:inputText value="#{pecaBean.peca.quantidade}" id="quantidade"
 					converter="javax.faces.Integer" size="3" />
 

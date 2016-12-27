@@ -2,8 +2,10 @@ package br.com.mb;
 
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
 
 import br.com.dao.DAO;
 import br.com.modelo.Item;
@@ -20,6 +22,7 @@ public class OrdemServicoBean {
 	private List<OrdemServico> ordemServicoList;
 	private List<OrdemServico> ordemServicoFilter;
 	private Boolean retiraPeca = false;
+	private int tab = 0;
 	
 	private Item item = new  Item();
 	
@@ -33,7 +36,16 @@ public class OrdemServicoBean {
 	public Long getIdVeiculo() {
 		return idVeiculo;
 	}
+	
+	
 
+	public int getTab() {
+		return tab;
+	}
+
+	public void setTab(int tab) {
+		this.tab = tab;
+	}
 
 	public void setIdVeiculo(Long idVeiculo) {
 		this.idVeiculo = idVeiculo;
@@ -92,7 +104,10 @@ public class OrdemServicoBean {
 
 	public void grava() {
 		
-		if (idVeiculo == null) return;
+		if (idVeiculo == null){ 
+			System.err.println("id do veiculo e nulo");
+			return;
+		}
 		
 		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		Veiculo veiculo = new DAO<Veiculo>(Veiculo.class).buscaPorld(idVeiculo);
@@ -109,7 +124,6 @@ public class OrdemServicoBean {
 		ordemServico = new OrdemServico();
 		item = new Item();
 		idVeiculo = null;
-		
 		ordemServicoList = dao.listaTodos();
 		
 		//return "wizard?faces-redirect=true";
@@ -152,27 +166,32 @@ public class OrdemServicoBean {
 		ordemServico = new OrdemServico();
 		idVeiculo = 0L;
 		retiraPeca = false;
+		tab = 0;
 	}
 	
 	public void adicionaItem(){
 		
-		if (idPeca == null) return;
+		if (idPeca == null){
+			FacesMessage msg = new FacesMessage("Seleciona uma peça!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);
+			return;
+		}
 		
 		DAO<Peca> pecaDAO = new DAO<>(Peca.class);
 		
 		// Buca peça
 		Peca peca = pecaDAO.buscaPorld(idPeca);
 		
-		
-		
 		if (peca.getQuantidade() < item.getQuantidade()){
-			System.out.println("quantidade de peça insuficiente");
+			FacesMessage msg = new FacesMessage("Quantidade de peças insuficiente!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);
 			return ;
 		}
 		
 		peca.setQuantidade(peca.getQuantidade() - item.getQuantidade());
 		
 		item.setPeca(peca);
+		
 		ordemServico.getItens().add(item);
 		
 		
@@ -187,13 +206,14 @@ public class OrdemServicoBean {
 		
 		
 			ordemServico.getItens().remove(item);
+			ordemServicoList = new DAO<>(OrdemServico.class).listaTodos();
 			
-			//item.setOrdemServico(ordemServico);
+			/*//item.setOrdemServico(ordemServico);
 			
 			//new DAO<>(OrdemServico.class).atualiza(ordemServico);
 			new DAO<>(Item.class).remove(item);
 			
-			ordemServicoList = new DAO<>(OrdemServico.class).listaTodos();
+			*/
 	}
 	
 	public void carregaVeiculo(Long id){
@@ -203,8 +223,10 @@ public class OrdemServicoBean {
 	
 	
 	
-	public void retirarPeca(){
+	public void retirarPeca(Long id){
 		retiraPeca = true;
+		idVeiculo = id;
+		tab = 1;
 	}
 	
 	

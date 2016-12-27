@@ -20,6 +20,10 @@ public class Item {
 	@ManyToOne(cascade={CascadeType.MERGE, CascadeType.REFRESH})
 	private Peca peca;
 	
+	/*@OneToOne(cascade=CascadeType.ALL)
+	@OnDelete(action=OnDeleteAction.CASCADE)
+	private Peca peca;*/
+	
 	@ManyToOne
 	private OrdemServico ordemServico;
 	
