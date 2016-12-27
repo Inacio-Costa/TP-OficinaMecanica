@@ -1,10 +1,14 @@
 package br.com.modelo;
 
+import java.util.Collection;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -33,6 +37,21 @@ public class Cliente {
 	@NotEmpty(message="O campo email não pode ser vazio!")
 	private String email;
 	
+	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
+	private Collection<Veiculo> veiculos;
+	
+	
+	
+	public Collection<Veiculo> getVeiculos() {
+		return veiculos;
+	}
+
+
+	public void setVeiculos(Collection<Veiculo> veiculos) {
+		this.veiculos = veiculos;
+	}
+
+
 	public Long getId() {
 		return id;
 	}

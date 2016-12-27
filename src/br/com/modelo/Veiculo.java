@@ -1,14 +1,16 @@
 package br.com.modelo;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @Entity
@@ -37,8 +39,10 @@ public class Veiculo {
 	/*@Size(min=1800, max=2017, message="Forneça uma valor válido para ano de modelo!")*/
 	private Integer anoModelo;
 	
-	@OneToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	private Cliente cliente;
+	
+	
 	
 	public Long getId() {
 		return id;

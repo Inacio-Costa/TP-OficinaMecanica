@@ -74,6 +74,7 @@ public class ClienteBean {
 	public void remove(Cliente cliente) {
 		try{			
 			dao.remove(cliente);
+			System.out.println("remove clienteBean");
 			clientes.remove(cliente);
 			//this.clientes = dao.listaTodos();
 		}catch (RollbackException e) {
