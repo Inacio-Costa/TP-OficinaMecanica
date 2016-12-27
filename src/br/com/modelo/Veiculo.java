@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -28,11 +29,12 @@ public class Veiculo {
 	@Column(unique=true)
 	private String placa;
 	
-	/*@NotEmpty(message="O campo Ano de Fabricação não deve ser vazio!")*/
-	/*@Past(message="A data de fabricação não pode ser maior que hoje!")*/
+	
+	/*@Size(min=1800, max=2017, message="Forneça uma valor válido para ano de modelo!")*/
 	private Integer anoFabricacao;
 	
-	/*@NotEmpty(message="O campo Ano de Modelo não deve ser vazio!")*/
+	
+	/*@Size(min=1800, max=2017, message="Forneça uma valor válido para ano de modelo!")*/
 	private Integer anoModelo;
 	
 	@OneToOne

@@ -34,12 +34,13 @@
 
 				<h:outputLabel value="anofabricacao" for="anofabricacao" />
 				<p:inputMask value="#{veiculoBean.veiculo.anoFabricacao}"
-					id="anofabricacao" mask="9999" converter="javax.faces.Integer"
-					size="5" />
+					id="anofabricacao" mask="9999" converter="javax.faces.Integer" required="true"
+					size="5" requiredMessage="O campo ano de fabricação não deve ser vazio!"/>
 
 				<h:outputLabel value="anomodelo" for="anomodelo" />
 				<p:inputMask value="#{veiculoBean.veiculo.anoModelo}" id="anomodelo"
-					mask="9999" converter="javax.faces.Integer" size="5" />
+					mask="9999" converter="javax.faces.Integer" size="5"  required="true"
+					requiredMessage="O campo ano de fabricação não deve ser vazio!"/>
 
 				<h:outputLabel value="Cliente" for="cliente" />
 				<p:selectOneMenu value="#{veiculoBean.idCliente}" id="cliente"

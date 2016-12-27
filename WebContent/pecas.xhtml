@@ -36,7 +36,9 @@
 
 				<h:outputLabel value="Quantidade" for="quantidade"/>
 				<p:inputText value="#{pecaBean.peca.quantidade}" id="quantidade"
-					converter="javax.faces.Integer" size="3" />
+					converter="javax.faces.Integer" size="3" required="true" 
+					requiredMessage="O campo quantidade não deve ser vazio!!"
+					/>
 
 				<br></br>
 				<div class="row">
@@ -51,7 +53,7 @@
 
 						<h:commandButton action="#{pecaBean.cancela}" value="Cancelar"
 							styleClass="btn btn-primary btn-sm">
-							<f:ajax execute="@form" render=":cadastro"></f:ajax>
+							<f:ajax  render=":cadastro"></f:ajax>
 						</h:commandButton>
 					</div>
 				</div>

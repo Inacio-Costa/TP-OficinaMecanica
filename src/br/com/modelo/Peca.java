@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -27,7 +28,7 @@ public class Peca {
 	@NotEmpty(message="O campo marca não deve ser vazio!")
 	private String marca;
 	
-	/*@NotEmpty(message="O campo quantidade não deve ser vazio!")*/
+	@Min(value=1, message="A quantidade deve ser maior que 0!")
 	private Integer quantidade;
 	
 	

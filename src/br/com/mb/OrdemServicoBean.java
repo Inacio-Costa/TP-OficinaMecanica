@@ -190,11 +190,8 @@ public class OrdemServicoBean {
 		
 		ordemServico.getItens().add(item);
 		
-		
 		item.setOrdemServico(ordemServico);
 		item = new Item();
-		
-		
 	}
 	
 	public void removeItem(Item item){
