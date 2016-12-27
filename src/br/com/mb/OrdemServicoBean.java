@@ -40,8 +40,6 @@ public class OrdemServicoBean {
 		return idVeiculo;
 	}
 	
-	
-
 	public int getTab() {
 		return tab;
 	}
