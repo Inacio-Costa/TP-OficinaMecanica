@@ -28,9 +28,12 @@ public class OrdemServicoBean {
 	
 	private Long idPeca;
 	private Long idVeiculo;
+	
+	private DAO<OrdemServico> dao;
 
 	public OrdemServicoBean() {
 		System.err.println("Instancianando novamente");
+		dao = new DAO<OrdemServico>(OrdemServico.class);
 	}
 	
 	public Long getIdVeiculo() {
@@ -109,55 +112,50 @@ public class OrdemServicoBean {
 			return;
 		}
 		
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		Veiculo veiculo = new DAO<Veiculo>(Veiculo.class).buscaPorld(idVeiculo);
 		
 		ordemServico.setVeiculo(veiculo);
 		
 		if (ordemServico.getId() == null) {
 			dao.adiciona(ordemServico);
+			ordemServicoList.add(ordemServico);
 		}else{
 			dao.atualiza(ordemServico);
+			ordemServicoList.set(ordemServicoList.indexOf(ordemServico), ordemServico);
 		}
 		
 		
 		ordemServico = new OrdemServico();
 		item = new Item();
 		idVeiculo = null;
-		ordemServicoList = dao.listaTodos();
 		
 		//return "wizard?faces-redirect=true";
 	}
 	
 	public void remove(OrdemServico OrdemServico) {
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		dao.remove(OrdemServico);
-		
-		this.ordemServicoList = dao.listaTodos();
+		ordemServicoList.remove(ordemServico);
 	}
 	
 	public List<OrdemServico> getOrdemServicos() {
 		if (ordemServicoList == null) {
-			ordemServicoList = new DAO<OrdemServico>(OrdemServico.class).listaTodos();
+			ordemServicoList = dao.listaTodos();
 		}
 		return ordemServicoList;
 	}
 	
 	
 	public void aprova(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Aprovada");
 		dao.atualiza(ordemServico);
 	}
 	
 	public void conclui(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Concluída");
 		dao.atualiza(ordemServico);
 	}
 	
 	public void pagamento(OrdemServico ordemServico){
-		DAO<OrdemServico> dao = new DAO<OrdemServico>(OrdemServico.class);
 		ordemServico.setStatus("Pago");
 		dao.atualiza(ordemServico);
 	}
@@ -203,17 +201,7 @@ public class OrdemServicoBean {
 	
 	public void removeItem(Item item){
 		System.out.println("Item a ser removido: " + item.getPeca().getNome());
-		
-		
-			ordemServico.getItens().remove(item);
-			ordemServicoList = new DAO<>(OrdemServico.class).listaTodos();
-			
-			/*//item.setOrdemServico(ordemServico);
-			
-			//new DAO<>(OrdemServico.class).atualiza(ordemServico);
-			new DAO<>(Item.class).remove(item);
-			
-			*/
+		ordemServico.getItens().remove(item);
 	}
 	
 	public void carregaVeiculo(Long id){

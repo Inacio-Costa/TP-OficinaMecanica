@@ -17,7 +17,13 @@ public class PecaBean {
 	private Peca peca = new Peca();
 	private List<Peca> pecas;
 	private List<Peca> pecaFilter;
+	private DAO<Peca> dao;
 	
+	
+	public PecaBean() {
+		dao = new DAO<Peca>(Peca.class);
+	}
+
 	public Peca getPeca() {
 		return peca;
 	}
@@ -38,30 +44,31 @@ public class PecaBean {
 		this.pecas = pecas;
 	}
 
-	public void grava() {
-		DAO<Peca> dao = new DAO<Peca>(Peca.class);
-		
-		if (peca.getId() == null)
+	public void grava() {		
+		if (peca.getId() == null){
 			dao.adiciona(peca);
-		else
+			pecas.add(peca);
+		}else{
 			dao.atualiza(peca);
+			pecas.set(pecas.indexOf(peca), peca);
+		}
 		
 		this.peca = new Peca();
-		this.pecas = dao.listaTodos();
+		//this.pecas = dao.listaTodos();
 	}
 	
 	public List<Peca> getPecas() {
 		if (pecas == null) {
-			pecas = new DAO<Peca>(Peca.class).listaTodos();
+			pecas = dao.listaTodos();
 		}
 		return pecas;
 	}
 	
-	public void remove(Peca Peca) {
+	public void remove(Peca peca) {
 		try{
-			DAO<Peca> dao = new DAO<Peca>(Peca.class);
-			dao.remove(Peca);
-			this.pecas = dao.listaTodos();
+			dao.remove(peca);
+			pecas.remove(peca);
+			//this.pecas = dao.listaTodos();
 		}catch (RollbackException e) {
 			FacesMessage msg = new FacesMessage("Você não pode excluir uma peça usada em uma ordem de serviço!");
 			FacesContext.getCurrentInstance().addMessage("erro", msg);
