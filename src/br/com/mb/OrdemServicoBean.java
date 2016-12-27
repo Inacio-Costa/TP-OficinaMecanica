@@ -1,5 +1,6 @@
 package br.com.mb;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.faces.application.FacesMessage;
@@ -107,6 +108,14 @@ public class OrdemServicoBean {
 		
 		if (idVeiculo == null){ 
 			System.err.println("id do veiculo e nulo");
+			FacesMessage msg = new FacesMessage("Selecione um veiculo!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);			
+			return;
+		}
+		
+		if (ordemServico.getValor() <= 0){ 
+			FacesMessage msg = new FacesMessage("Valor incorreto!");
+			FacesContext.getCurrentInstance().addMessage("erro", msg);			
 			return;
 		}
 		
@@ -118,14 +127,20 @@ public class OrdemServicoBean {
 			dao.adiciona(ordemServico);
 			ordemServicoList.add(ordemServico);
 		}else{
-			dao.atualiza(ordemServico);
-			ordemServicoList.set(ordemServicoList.indexOf(ordemServico), ordemServico);
+			try{
+				dao.atualiza(ordemServico);
+				ordemServicoList.set(ordemServicoList.indexOf(ordemServico), ordemServico);
+			}catch (java.lang.IllegalStateException e) {
+				FacesMessage msg = new FacesMessage("Um erro ocorreu!");
+				FacesContext.getCurrentInstance().addMessage("erro", msg);
+			}
 		}
 		
 		
 		ordemServico = new OrdemServico();
 		item = new Item();
 		idVeiculo = null;
+		idPeca = null;
 		
 		//return "wizard?faces-redirect=true";
 	}
@@ -144,6 +159,7 @@ public class OrdemServicoBean {
 	
 	
 	public void aprova(OrdemServico ordemServico){
+		ordemServico.setDataServico(Calendar.getInstance());
 		ordemServico.setStatus("Aprovada");
 		dao.atualiza(ordemServico);
 	}
@@ -163,6 +179,7 @@ public class OrdemServicoBean {
 		idVeiculo = 0L;
 		retiraPeca = false;
 		tab = 0;
+		idPeca = null;
 	}
 	
 	public void adicionaItem(){
@@ -178,13 +195,22 @@ public class OrdemServicoBean {
 		// Buca peça
 		Peca peca = pecaDAO.buscaPorld(idPeca);
 		
+		for (Item item : ordemServico.getItens()) {
+			if(item.getPeca().getId() == peca.getId()){
+				System.out.println("Entrei aqui...");
+				FacesMessage msg = new FacesMessage("Peça já foi adicionada!");
+				FacesContext.getCurrentInstance().addMessage("erro", msg);
+				return ;
+			}
+		}
+		
 		if (peca.getQuantidade() < item.getQuantidade()){
 			FacesMessage msg = new FacesMessage("Quantidade de peças insuficiente!");
 			FacesContext.getCurrentInstance().addMessage("erro", msg);
 			return ;
 		}
 		
-		peca.setQuantidade(peca.getQuantidade() - item.getQuantidade());
+		//peca.setQuantidade(peca.getQuantidade() - item.getQuantidade());
 		
 		item.setPeca(peca);
 		

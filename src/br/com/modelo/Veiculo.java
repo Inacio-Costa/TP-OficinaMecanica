@@ -39,7 +39,7 @@ public class Veiculo {
 	/*@Size(min=1800, max=2017, message="Forneça uma valor válido para ano de modelo!")*/
 	private Integer anoModelo;
 	
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	private Cliente cliente;
 	
 	

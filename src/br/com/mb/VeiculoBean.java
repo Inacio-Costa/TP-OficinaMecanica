@@ -64,8 +64,13 @@ public class VeiculoBean {
 		veiculo.setCliente(cliente);
 
 		if (veiculo.getId()==null){
-			dao.adiciona(veiculo);
-			veiculos.add(veiculo);
+			try{
+				dao.adiciona(veiculo);
+				veiculos.add(veiculo);			
+			}catch (RollbackException e) {
+				FacesMessage msg = new FacesMessage("Veiculo já cadastrado!");
+				FacesContext.getCurrentInstance().addMessage("erro", msg);
+			}
 		}else{
 			dao.atualiza(veiculo);
 			veiculos.set(veiculos.indexOf(veiculo), veiculo);
@@ -75,6 +80,7 @@ public class VeiculoBean {
 
 		veiculo = new Veiculo();
 		veiculos = dao.listaTodos();
+		idCliente = null;
 
 		return "veiculo?faces-redirect=true";
 	}

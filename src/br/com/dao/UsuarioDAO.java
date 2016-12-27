@@ -12,7 +12,7 @@ public class UsuarioDAO {
 		EntityManager em = new JPAUtil().getEntityManager();
 		em.getTransaction().begin();
 		
-		Query query = em.createQuery("SELECT u FROM Usuario u WHERE u.login=:pLogin and u.login=:pSenha");
+		Query query = em.createQuery("SELECT u FROM Usuario u WHERE u.login=:pLogin and u.senha=:pSenha");
 		query.setParameter("pLogin", usuario.getLogin());
 		query.setParameter("pSenha", usuario.getSenha());
 		

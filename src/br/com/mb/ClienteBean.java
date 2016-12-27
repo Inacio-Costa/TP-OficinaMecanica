@@ -49,8 +49,13 @@ public class ClienteBean {
 
 	public void grava() {		
 		if (cliente.getId() == null){
-			dao.adiciona(cliente);
-			clientes.add(cliente);
+			try{
+				dao.adiciona(cliente);
+				clientes.add(cliente);
+			}catch (RollbackException e) {
+				FacesMessage msg = new FacesMessage("Cliente já cadastrado!");
+				FacesContext.getCurrentInstance().addMessage("erro", msg);
+			}
 		}else{
 			dao.atualiza(cliente);
 			clientes.set(clientes.indexOf(cliente), cliente);

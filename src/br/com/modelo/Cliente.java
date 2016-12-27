@@ -40,8 +40,6 @@ public class Cliente {
 	@OneToMany(mappedBy="cliente", cascade=CascadeType.ALL)
 	private Collection<Veiculo> veiculos;
 	
-	
-	
 	public Collection<Veiculo> getVeiculos() {
 		return veiculos;
 	}

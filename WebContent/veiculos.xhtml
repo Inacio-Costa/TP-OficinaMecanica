@@ -61,8 +61,10 @@
 
 						<h:commandButton value="Cancelar" action="#{veiculoBean.cancela}"
 							styleClass="btn btn-primary btn-sm">
-							<f:ajax render=":cadastro"></f:ajax>
+							<f:ajax execute="@form" render=":cadastro"></f:ajax>
 						</h:commandButton>
+						
+						
 					</div>
 				</div>
 			</p:fieldset>
@@ -78,7 +80,7 @@
 			<p:messages styleClass="erros"
 				rendered="#{loginBean.usuario.papel != perfilBean.recepcionista}" />
 			<p:dataTable value="#{veiculoBean.veiculos}" var="veiculo"
-				paginator="true" rows="5" widgetVar="veiculoTable"
+				paginator="true" rows="4" widgetVar="veiculoTable"
 				emptyMessage="Nenhum resultado encontrado..."
 				filteredValue="#{veiculoBean.veiculoFilter}">
 

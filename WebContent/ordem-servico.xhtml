@@ -25,33 +25,34 @@
 				<p:tabView id="cadastrotabs" activeIndex="#{ordemServicoBean.tab}" >
 
 					<p:tab title="Serviço" disabled="#{ordemServicoBean.retiraPeca}">
-						<p:outputLabel value="Veiculo" for="veiculo" />
+						<h:outputLabel value="Veiculo" for="veiculo" />
 						<p:selectOneMenu value="#{ordemServicoBean.idVeiculo}"
-							id="veiculo">
+							id="veiculo" required="true" requiredMessage="Selecion um veículo!" >
+							
 							<f:selectItem itemLabel="Selecione o veiculo" />
 							<f:selectItems value="#{veiculoBean.veiculos}" var="veiculo"
-								itemValue="#{veiculo.id}" itemLabel="#{veiculo.placa}" />
+								itemValue="#{veiculo.id}" itemLabel="#{veiculo.placa}" />								
 						</p:selectOneMenu>
 
 						<br></br>
 
-						<p:outputLabel value="Dataorçamento" for="dataOrcamento" />
+						<h:outputLabel value="Dataorçamento" for="dataOrcamento" />
 						<p:calendar size="12"
 							value="#{ordemServicoBean.ordemServico.dataOrcamento.time}"
 							readonly="true" showOn="false" pattern="dd/MM/yyyy"
 							mask="99/99/9999" id="dataOrcamento" />
 
-						<p:outputLabel value="Servico" for="servico" />
+						<h:outputLabel value="Servico" for="servico" />
 						<p:inputTextarea id="servico" cols="50" requiredMessage="Digite o serviço" required="true"
 							value="#{ordemServicoBean.ordemServico.servico}">
 						</p:inputTextarea>
 
-						<p:outputLabel value="Valor: R$" for="valor" />
+						<h:outputLabel value="Valor: R$" for="valor" />
 						<p:inputText id="valor" size="10"
 							value="#{ordemServicoBean.ordemServico.valor}" />
 
 
-						<p:outputLabel value="Status" for="status" />
+						<h:outputLabel value="Status" for="status" />
 						<p:inputText value="#{ordemServicoBean.ordemServico.status}"
 							id="status" readonly="true" />
 
@@ -60,7 +61,6 @@
 
 					<p:tab title="Peças">
 		
-
 						<h:panelGroup class="row" rendered="#{not ordemServicoBean.retiraPeca}">
 							<div class="col-md-4">
 								<p:outputLabel value="Peças" for="peca" />
@@ -234,7 +234,9 @@
 							<h:commandButton value="Pagamento"
 								styleClass="btn  btn-primary btn-sm"
 								action="#{ordemServicoBean.pagamento(os)}"
-								rendered="#{os.status.equals('Concluída') and perfilBean.gerente.equals(loginBean.usuario.papel)}">
+								rendered="#{os.status.equals('Concluída') and perfilBean.gerente.equals(loginBean.usuario.papel)}"
+								onclick="return confirm('Deseja confirma o pagamento ?');">
+								<f:setPropertyActionListener value="#{os}" target="#{ordemServicoBean.ordemServico}" ></f:setPropertyActionListener>
 								<f:ajax render="@form"></f:ajax>
 							</h:commandButton>
 
@@ -255,13 +257,13 @@
 								<f:ajax render=":cadastro"></f:ajax>
 							</h:commandButton>
 
-
-							<h:commandButton styleClass="btn  btn-danger btn-sm" 
+							<h:commandLink styleClass="btn  btn-danger btn-sm" 
 								rendered="#{loginBean.usuario.papel == perfilBean.gerente}"
 								value="remover" action="#{ordemServicoBean.remove(os)}"
 								onclick="return confirm('Deseja fazer a Exclusão ?');">
 								<f:ajax render="@form"></f:ajax>
-							</h:commandButton>
+							</h:commandLink>
+														
 						</div>
 					</p:column>
 				</p:dataTable>
